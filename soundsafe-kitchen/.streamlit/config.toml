@@ -1,1 +1,21 @@
+# Sets the app theme and page settings
 
+config_dir = os.path.join(streamlit_dir, '.streamlit')
+os.makedirs(config_dir, exist_ok=True)
+
+config_content = """[theme]
+primaryColor          = "#C94B4B"
+backgroundColor       = "#0E1117"
+secondaryBackgroundColor = "#1A1A2E"
+textColor             = "#FAFAFA"
+font                  = "sans serif"
+
+[browser]
+gatherUsageStats = false
+"""
+
+config_path = os.path.join(config_dir, 'config.toml')
+with open(config_path, 'w') as f:
+    f.write(config_content)
+
+print(f'✓ .streamlit/config.toml created')
