@@ -1,4 +1,4 @@
-<img width="1200" height="800" alt="image" src="https://github.com/user-attachments/assets/1ee0527e-e3b2-4641-99fe-763390504cf7" />
+<img width="235" height="130" alt="image" src="https://github.com/user-attachments/assets/9430aebf-5dc3-4edd-859f-615846ac2c9e" />
 
 ### Kitchen Hazard Prediction from Passive Audio using Deep Learning
 
