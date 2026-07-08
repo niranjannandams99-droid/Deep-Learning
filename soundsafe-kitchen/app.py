@@ -1,5 +1,6 @@
+# SoundSafe Kitchen — Streamlit Application
 
-# SoundSafe Kitchen - Streamlit Application
+
 import streamlit as st
 import numpy as np
 import torch
@@ -26,11 +27,11 @@ st.set_page_config(
 COLOR_SAFE    = "#2D6A4F"
 COLOR_CAUTION = "#E8A838"
 COLOR_HAZARD  = "#C94B4B"
-COLOR_SIGNAL  = "#52E3C2"   # "listening" accent - used for UI chrome, not chart data
+COLOR_SIGNAL  = "#52E3C2"   # "listening" accent — used for UI chrome, not chart data
 THRESHOLD     = 0.5
 
 # ── Author / links ─────────────────────────────────────────────
-# Edit these to match your details - they drive the hero banner,
+# Edit these to match your details — they drive the hero banner,
 # sidebar profile card and footer everywhere in the app.
 AUTHOR_NAME   = "Niranjan Nandam"
 AUTHOR_ROLE   = "Data Analyst · Deep Learning"
@@ -38,11 +39,11 @@ GITHUB_URL    = "https://github.com/niranjannandams99-droid"
 REPO_URL      = "https://github.com/niranjannandams99-droid/Deep-Learning/tree/main/soundsafe-kitchen"
 MEDIUM_URL    = "https://medium.com/@niranjan.nandams99"
 LINKEDIN_URL  = "https://www.linkedin.com/in/niranjan-nandam/"   
-EMAIL_ADDR    = "niranjan.nandams99@gmail.com"  
+EMAIL_ADDR    = "niranjan.nandams99@gmail.com"   
 
 
 # ============================================================
-# CUSTOM THEME - fonts, background, hero, footer
+# CUSTOM THEME — fonts, background, hero, footer
 # ============================================================
 def inject_custom_css():
     st.markdown(f"""
@@ -53,7 +54,7 @@ def inject_custom_css():
         font-family: 'Inter', sans-serif;
     }}
 
-    /* ── Ambient background - slow drifting radial glow, restrained ── */
+    /* - Ambient background — slow drifting radial glow, restrained ── */
     .stApp {{
         background:
             radial-gradient(circle at 15% 0%, rgba(82,227,194,0.07) 0%, transparent 45%),
@@ -74,7 +75,7 @@ def inject_custom_css():
         justify-content: space-between;
         gap: 24px;
         padding: 22px 28px;
-        margin: -1rem -1rem 1.6rem -1rem;
+        margin: 0 -1rem 1.6rem -1rem;
         background: linear-gradient(180deg, #101720 0%, #0A0E14 100%);
         border-bottom: 1px solid rgba(82,227,194,0.18);
         flex-wrap: wrap;
@@ -176,7 +177,7 @@ def inject_custom_css():
     .ssk-footer-right {{ display: flex; gap: 14px; }}
 
     /* Tighten default top padding since hero replaces it */
-    .block-container {{ padding-top: 1.4rem; }}
+    .block-container {{ padding-top: 3.2rem; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -232,7 +233,7 @@ N_FFT      = 2048
 CLIP_DUR   = 5.0
 
 # ============================================================
-# MODEL ARCHITECTURE - must match training exactly
+# MODEL ARCHITECTURE — must match training exactly
 # ============================================================
 class TemporalAttention(nn.Module):
     def __init__(self, n_channels):
@@ -307,7 +308,7 @@ def preprocess_audio(audio, sr_in):
         audio = audio.mean(axis=0)
     # Remove DC offset
     audio = (audio - np.mean(audio)).astype(np.float32)
-    # High-pass filter at 80 Hz - removes electrical hum
+    # High-pass filter at 80 Hz — removes electrical hum
     nyq = SR / 2.0
     sos = scipy_signal.butter(
         4, 80 / nyq, btype="high", output="sos")
@@ -403,7 +404,7 @@ def generate_demo_audio(demo_type):
 
 
 # ============================================================
-# LOAD MODEL - cached so it only loads once
+# LOAD MODEL — cached so it only loads once
 # ============================================================
 @st.cache_resource
 def load_cnn_model():
@@ -478,7 +479,7 @@ def render_sidebar():
             c2.markdown(f"**{val}**")
 
         st.divider()
-        st.caption("CP2 - Deep Learning Track")
+        st.caption("CP2 — Deep Learning Track")
         st.caption("Dataset: ESC-50 + Synthetic")
 
     return page
@@ -491,7 +492,7 @@ def page_audio_analysis(model):
     st.title("🔍 Kitchen Audio Hazard Analysis")
     st.markdown(
         "Upload a kitchen audio file or try a demo. "
-        "The model predicts cooking hazards from audio alone - "
+        "The model predicts cooking hazards from audio alone — "
         "**no camera, no sensor, no new hardware.**"
     )
 
@@ -584,11 +585,11 @@ def page_audio_analysis(model):
             col     = COLOR_HAZARD
             emoji   = "🔴"
         elif max_prob >= 0.30:
-            verdict = "⚡ CAUTION - Monitor Closely"
+            verdict = "⚡ CAUTION — Monitor Closely"
             col     = COLOR_CAUTION
             emoji   = "🟡"
         else:
-            verdict = "✅ SAFE - No Hazard Detected"
+            verdict = "✅ SAFE — No Hazard Detected"
             col     = COLOR_SAFE
             emoji   = "🟢"
 
@@ -697,7 +698,7 @@ def page_audio_analysis(model):
         st.plotly_chart(fig_p, use_container_width=True)
 
         # Attention weights
-        st.markdown("### Model Attention - Where the Model Focused")
+        st.markdown("### Model Attention — Where the Model Focused")
         st.caption(
             "Higher attention weight = the model considered that "
             "time frame more important for hazard prediction."
@@ -736,18 +737,18 @@ def page_audio_analysis(model):
         st.markdown("### 💡 Recommendation")
         if max_prob >= THRESHOLD:
             st.error(
-                "⚠️ **HAZARD DETECTED** - Return to the kitchen "
+                "⚠️ **HAZARD DETECTED** — Return to the kitchen "
                 "immediately. Oil may be overheating, a pan may be "
                 "about to boil over, or food may be burning."
             )
         elif max_prob >= 0.30:
             st.warning(
-                "⚡ **Monitor Closely** - Cooking sounds are "
+                "⚡ **Monitor Closely** — Cooking sounds are "
                 "intensifying. Keep an eye on the hob."
             )
         else:
             st.success(
-                "✅ **Sounds Safe** - No hazard detected. "
+                "✅ **Sounds Safe** — No hazard detected. "
                 "Consistent with normal safe cooking."
             )
 
@@ -770,7 +771,7 @@ def page_hazard_timeline():
     sr         = st.session_state["sr"]
 
     st.markdown(
-        f"Timeline for last analysed clip - "
+        f"Timeline for last analysed clip — "
         f"**{len(audio_data)/sr:.1f}s** duration, "
         f"**{len(results)}** windows analysed"
     )
@@ -990,7 +991,7 @@ to predict hazards from passive audio.
 
 
 # ============================================================
-# MAIN - route to the correct page
+# MAIN — route to the correct page
 # ============================================================
 inject_custom_css()
 render_hero()
