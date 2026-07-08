@@ -64,6 +64,9 @@ streamlit run app.py
 
 ---
 
+## Project Structure
+
+```text id="3g9ztm"
 ```text
 soundsafe-kitchen/
 ├── .streamlit/
@@ -72,7 +75,9 @@ soundsafe-kitchen/
 ├── cnn_attention_model.pt    # Trained CNN model (2.3 MB)
 ├── README.md                 # Project documentation
 └── requirements.txt          # Python dependencies
+````
 
+---
 
 ## 📊 Dataset
 
