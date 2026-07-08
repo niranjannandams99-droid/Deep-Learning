@@ -80,8 +80,8 @@ soundsafe-kitchen/
 
 ## 📊 Dataset
 
-- **ESC-50** — Environmental Sound Classification (Creative Commons)
-- **Synthetic** — Programmatically generated kitchen audio
+- **ESC-50** - Environmental Sound Classification (Creative Commons)
+- **Synthetic** - Programmatically generated kitchen audio
 - **Total**: 776 clips | 543 train / 116 val / 117 test
 
 ---
@@ -97,6 +97,6 @@ soundsafe-kitchen/
 
 ## 📄 Licence
 
-MIT Licence — free to use, modify, and distribute with attribution.
+MIT Licence - free to use, modify, and distribute with attribution.
 
 ---
