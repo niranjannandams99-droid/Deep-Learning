@@ -67,7 +67,7 @@ streamlit run app.py
 ## Project Structure
 
 ```text id="3g9ztm"
-```text
+
 soundsafe-kitchen/
 ├── .streamlit/
 │   └── config.toml          # App theme configuration
