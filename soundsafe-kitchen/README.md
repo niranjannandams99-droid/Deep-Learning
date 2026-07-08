@@ -67,10 +67,15 @@ streamlit run app.py
 
 soundsafe-kitchen/
 ├── app.py                    # Streamlit application
+|
 ├── cnn_attention_model.pt    # Trained CNN model (2.3 MB)
+|
 ├── requirements.txt          # Python dependencies
+|
 ├── .streamlit/
-│   └── config.toml          # App theme configuration
+│
+|└── config.toml          # App theme configuration
+|
 └── README.md
 
 ## 📊 Dataset
