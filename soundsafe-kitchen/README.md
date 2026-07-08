@@ -2,8 +2,9 @@
 
 ### Kitchen Hazard Prediction from Passive Audio using Deep Learning
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://soundsafe-kitchen.streamlit.app)
-[![Tap to Open Web Page](https://img.shields.io/badge/Streamlit-Tap%20to%20Open%20Web%20Page-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://soundsafe-kitchen.streamlit.app)---
+👉[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://soundsafe-kitchen.streamlit.app)
+
+---
 
 ## 👨‍💻 Author
 **Niranjan Nandam**
