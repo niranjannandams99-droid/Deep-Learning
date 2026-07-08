@@ -1,12 +1,5 @@
-# ============================================================
-# SoundSafe Kitchen — Streamlit Application
-# app.py
-# ============================================================
-# HOW TO RUN:
-#   Open terminal in this folder and run:
-#   streamlit run app.py
-# ============================================================
 
+# SoundSafe Kitchen — Streamlit Application
 import streamlit as st
 import numpy as np
 import torch
@@ -33,7 +26,203 @@ st.set_page_config(
 COLOR_SAFE    = "#2D6A4F"
 COLOR_CAUTION = "#E8A838"
 COLOR_HAZARD  = "#C94B4B"
+COLOR_SIGNAL  = "#52E3C2"   # "listening" accent — used for UI chrome, not chart data
 THRESHOLD     = 0.5
+
+# ── Author / links ─────────────────────────────────────────────
+# Edit these to match your details — they drive the hero banner,
+# sidebar profile card and footer everywhere in the app.
+AUTHOR_NAME   = "Niranjan Nandam"
+AUTHOR_ROLE   = "Data Analyst · Deep Learning"
+GITHUB_URL    = "https://github.com/niranjannandams99-droid"
+REPO_URL      = "https://github.com/niranjannandams99-droid/Deep-Learning/tree/main/soundsafe-kitchen"
+MEDIUM_URL    = "https://medium.com/@niranjan.nandams99"
+LINKEDIN_URL  = "https://www.linkedin.com/in/niranjan-nandam/"   
+EMAIL_ADDR    = "niranjan.nandams99@gmail.com"  
+
+
+# ============================================================
+# CUSTOM THEME — fonts, background, hero, footer
+# ============================================================
+def inject_custom_css():
+    st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    html, body, [class*="css"] {{
+        font-family: 'Inter', sans-serif;
+    }}
+
+    /* ── Ambient background — slow drifting radial glow, restrained ── */
+    .stApp {{
+        background:
+            radial-gradient(circle at 15% 0%, rgba(82,227,194,0.07) 0%, transparent 45%),
+            radial-gradient(circle at 85% 100%, rgba(201,75,75,0.06) 0%, transparent 45%),
+            #080B10;
+        background-attachment: fixed;
+    }}
+
+    section[data-testid="stSidebar"] {{
+        background: #0C1218;
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }}
+
+    /* ── Hero banner ── */
+    .ssk-hero {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 22px 28px;
+        margin: -1rem -1rem 1.6rem -1rem;
+        background: linear-gradient(180deg, #101720 0%, #0A0E14 100%);
+        border-bottom: 1px solid rgba(82,227,194,0.18);
+        flex-wrap: wrap;
+    }}
+    .ssk-hero-left {{ display: flex; align-items: center; gap: 18px; }}
+    .ssk-eq {{ display: flex; align-items: flex-end; gap: 3px; height: 34px; }}
+    .ssk-eq span {{
+        width: 4px;
+        background: {COLOR_SIGNAL};
+        border-radius: 2px;
+        animation: ssk-wave 1.1s ease-in-out infinite;
+        box-shadow: 0 0 6px rgba(82,227,194,0.6);
+    }}
+    .ssk-eq span:nth-child(1) {{ animation-delay: 0.0s; height: 40%; }}
+    .ssk-eq span:nth-child(2) {{ animation-delay: 0.15s; height: 70%; }}
+    .ssk-eq span:nth-child(3) {{ animation-delay: 0.3s; height: 100%; }}
+    .ssk-eq span:nth-child(4) {{ animation-delay: 0.45s; height: 55%; }}
+    .ssk-eq span:nth-child(5) {{ animation-delay: 0.6s; height: 85%; }}
+    .ssk-eq span:nth-child(6) {{ animation-delay: 0.75s; height: 35%; }}
+    @keyframes ssk-wave {{
+        0%, 100% {{ transform: scaleY(0.35); }}
+        50%      {{ transform: scaleY(1); }}
+    }}
+
+    .ssk-title {{
+        font-family: 'Sora', sans-serif;
+        font-weight: 800;
+        font-size: 26px;
+        color: #EDF1F5;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }}
+    .ssk-subtitle {{
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        color: #8B98A5;
+        margin: 2px 0 0 0;
+    }}
+
+    .ssk-byline {{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }}
+    .ssk-avatar {{
+        width: 38px; height: 38px; border-radius: 50%;
+        background: linear-gradient(135deg, {COLOR_SIGNAL}, {COLOR_HAZARD});
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px;
+        color: #080B10;
+        flex-shrink: 0;
+    }}
+    .ssk-byline-text {{ line-height: 1.25; }}
+    .ssk-byline-name {{ font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; color: #EDF1F5; }}
+    .ssk-byline-role {{ font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {COLOR_SIGNAL}; }}
+
+    .ssk-pill {{
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        color: #C7D0D9 !important;
+        text-decoration: none !important;
+        background: rgba(255,255,255,0.03);
+        transition: all 0.15s ease;
+    }}
+    .ssk-pill:hover {{
+        border-color: {COLOR_SIGNAL};
+        color: {COLOR_SIGNAL} !important;
+        background: rgba(82,227,194,0.08);
+    }}
+
+    /* ── Sidebar profile card ── */
+    .ssk-side-card {{
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px; margin-bottom: 6px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 12px;
+    }}
+    .ssk-side-links {{ display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }}
+    .ssk-side-link {{
+        font-family: 'Inter', sans-serif; font-size: 12.5px;
+        color: #8B98A5 !important; text-decoration: none !important;
+        display: flex; align-items: center; gap: 6px;
+        transition: color 0.15s ease;
+    }}
+    .ssk-side-link:hover {{ color: {COLOR_SIGNAL} !important; }}
+
+    /* ── Footer ── */
+    .ssk-footer {{
+        margin-top: 40px;
+        padding: 20px 4px 6px 4px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 10px;
+    }}
+    .ssk-footer-left {{ font-family: 'Inter', sans-serif; font-size: 12px; color: #6B7784; }}
+    .ssk-footer-left b {{ color: #9AA6B1; }}
+    .ssk-footer-right {{ display: flex; gap: 14px; }}
+
+    /* Tighten default top padding since hero replaces it */
+    .block-container {{ padding-top: 1.4rem; }}
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def render_hero():
+    links_html = f'<a class="ssk-pill" href="{GITHUB_URL}" target="_blank">⌥ GitHub</a>'
+    links_html += f'<a class="ssk-pill" href="{MEDIUM_URL}" target="_blank">✎ Medium</a>'
+    if LINKEDIN_URL:
+        links_html += f'<a class="ssk-pill" href="{LINKEDIN_URL}" target="_blank">in LinkedIn</a>'
+    initials = "".join([p[0] for p in AUTHOR_NAME.split()[:2]]).upper()
+
+    st.markdown(f"""
+    <div class="ssk-hero">
+        <div class="ssk-hero-left">
+            <div class="ssk-eq"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div>
+                <p class="ssk-title">🔥 SoundSafe Kitchen</p>
+                <p class="ssk-subtitle">Passive audio hazard prediction · 1D CNN + Temporal Attention</p>
+            </div>
+        </div>
+        <div class="ssk-byline">
+            <div class="ssk-avatar">{initials}</div>
+            <div class="ssk-byline-text">
+                <div class="ssk-byline-name">{AUTHOR_NAME}</div>
+                <div class="ssk-byline-role">{AUTHOR_ROLE}</div>
+            </div>
+            {links_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_footer():
+    email_html = f'<a class="ssk-pill" href="mailto:{EMAIL_ADDR}">✉ Email</a>' if EMAIL_ADDR else ""
+    st.markdown(f"""
+    <div class="ssk-footer">
+        <div class="ssk-footer-left">
+            © 2026 <b>{AUTHOR_NAME}</b> · MIT Licence · Built with PyTorch, Librosa &amp; Streamlit
+        </div>
+        <div class="ssk-footer-right">
+            <a class="ssk-pill" href="{REPO_URL}" target="_blank">⌥ Source</a>
+            <a class="ssk-pill" href="{MEDIUM_URL}" target="_blank">✎ Write-up</a>
+            {email_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ── Audio settings (must match training) ─────────────────────
 SR         = 16000
@@ -244,8 +433,24 @@ def load_cnn_model():
 # SIDEBAR
 # ============================================================
 def render_sidebar():
+    initials = "".join([p[0] for p in AUTHOR_NAME.split()[:2]]).upper()
     with st.sidebar:
-        st.markdown("## 🔥 SoundSafe Kitchen")
+        st.markdown(f"""
+        <div class="ssk-side-card">
+            <div class="ssk-avatar">{initials}</div>
+            <div class="ssk-byline-text">
+                <div class="ssk-byline-name">{AUTHOR_NAME}</div>
+                <div class="ssk-byline-role">{AUTHOR_ROLE}</div>
+            </div>
+        </div>
+        <div class="ssk-side-links">
+            <a class="ssk-side-link" href="{GITHUB_URL}" target="_blank">⌥ GitHub profile</a>
+            <a class="ssk-side-link" href="{REPO_URL}" target="_blank">📁 Project source</a>
+            <a class="ssk-side-link" href="{MEDIUM_URL}" target="_blank">✎ Read the write-up</a>
+        </div>
+        """, unsafe_allow_html=True)
+        st.divider()
+        st.caption("🔥 SoundSafe Kitchen")
         st.caption("Predicting cooking hazards before they happen")
         st.divider()
 
@@ -759,10 +964,37 @@ to predict hazards from passive audio.
 - **Total**: 585 labelled clips → 117 held-out test clips
 """)
 
+    st.divider()
+    st.markdown("### 👤 About the Author")
+    initials = "".join([p[0] for p in AUTHOR_NAME.split()[:2]]).upper()
+    email_html = f'<a class="ssk-pill" href="mailto:{EMAIL_ADDR}">✉ Email</a>' if EMAIL_ADDR else ""
+    linkedin_html = f'<a class="ssk-pill" href="{LINKEDIN_URL}" target="_blank">in LinkedIn</a>' if LINKEDIN_URL else ""
+    st.markdown(f"""
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+                padding:16px 18px; background:rgba(255,255,255,0.03);
+                border:1px solid rgba(255,255,255,0.07); border-radius:14px;">
+        <div class="ssk-avatar" style="width:52px;height:52px;font-size:18px;">{initials}</div>
+        <div style="flex:1; min-width:180px;">
+            <div class="ssk-byline-name" style="font-size:16px;">{AUTHOR_NAME}</div>
+            <div class="ssk-byline-role" style="font-size:12px;">{AUTHOR_ROLE}</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="ssk-pill" href="{GITHUB_URL}" target="_blank">⌥ GitHub</a>
+            <a class="ssk-pill" href="{REPO_URL}" target="_blank">📁 Project Repo</a>
+            <a class="ssk-pill" href="{MEDIUM_URL}" target="_blank">✎ Medium</a>
+            {linkedin_html}
+            {email_html}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # ============================================================
 # MAIN — route to the correct page
 # ============================================================
+inject_custom_css()
+render_hero()
+
 model, load_err = load_cnn_model()
 
 page = render_sidebar()
@@ -775,3 +1007,5 @@ elif page == "🏆 Model Comparison":
     page_model_comparison()
 elif page == "ℹ️ About the Project":
     page_about()
+
+render_footer()
