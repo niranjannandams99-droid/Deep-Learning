@@ -1,4 +1,4 @@
-readme_content = """# 🔊 SoundSafe Kitchen
+🔊 SoundSafe Kitchen
 ### Kitchen Hazard Prediction from Passive Audio using Deep Learning
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://soundsafe-kitchen.streamlit.app)
