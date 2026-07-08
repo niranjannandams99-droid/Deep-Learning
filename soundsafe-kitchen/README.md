@@ -74,6 +74,8 @@ soundsafe-kitchen/
 ├── cnn_attention_model.pt    # Trained CNN model (2.3 MB)
 ├── README.md                 # Project documentation
 └── requirements.txt          # Python dependencies
+\`\`\`text
+
 
 ## 📊 Dataset
 
