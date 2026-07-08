@@ -7,7 +7,7 @@
 
 ## 👨‍💻 Author
 **Niranjan Nandam**
-📧 your.email@gmail.com
+📧 niranjan.nandams99@gmail.com
 
 ---
 
