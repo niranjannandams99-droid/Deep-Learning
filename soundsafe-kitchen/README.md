@@ -16,9 +16,9 @@
 SoundSafe Kitchen uses a **1D CNN with Temporal Self-Attention** to predict
 cooking hazards from passive kitchen audio — before they become dangerous.
 
-- **No camera required** — audio only
-- **No new hardware** — uses any phone/laptop/smart speaker microphone
-- **Predicts 30–90 seconds before** the hazard occurs
+- **No camera required** - audio only
+- **No new hardware** - uses any phone/laptop/smart speaker microphone
+- **Predicts 30-90 seconds before** the hazard occurs
 - **99.1% accuracy** on held-out test set
 
 ---
