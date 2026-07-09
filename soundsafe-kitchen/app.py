@@ -1,5 +1,11 @@
+# ============================================================
 # SoundSafe Kitchen - Streamlit Application
-
+# app.py
+# ============================================================
+# HOW TO RUN:
+#   Open terminal in this folder and run:
+#   streamlit run app.py
+# ============================================================
 
 import streamlit as st
 import numpy as np
@@ -15,7 +21,7 @@ from scipy import signal as scipy_signal
 # Path to the Streamlit app folder
 streamlit_dir = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
 
-# - Page configuration --------------------
+# ── Page configuration ────────────────────────────────────────
 st.set_page_config(
     page_title="SoundSafe Kitchen",
     page_icon="🔥",
@@ -23,14 +29,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# - Colours -------------------------─
+# ── Colours ───────────────────────────────────────────────────
 COLOR_SAFE    = "#2D6A4F"
 COLOR_CAUTION = "#E8A838"
 COLOR_HAZARD  = "#C94B4B"
 COLOR_SIGNAL  = "#52E3C2"   # "listening" accent - used for UI chrome, not chart data
 THRESHOLD     = 0.5
 
-# - Author / links ----------------------─
+# ── Author / links ─────────────────────────────────────────────
 # Edit these to match your details - they drive the hero banner,
 # sidebar profile card and footer everywhere in the app.
 AUTHOR_NAME   = "Niranjan Nandam"
@@ -39,7 +45,7 @@ GITHUB_URL    = "https://github.com/niranjannandams99-droid"
 REPO_URL      = "https://github.com/niranjannandams99-droid/Deep-Learning/tree/main/soundsafe-kitchen"
 MEDIUM_URL    = "https://medium.com/@niranjan.nandams99"
 LINKEDIN_URL  = "https://www.linkedin.com/in/niranjan-nandam/"   
-EMAIL_ADDR    = "niranjan.nandams99@gmail.com"   
+EMAIL_ADDR    = "niranjan.nandams99@gmail.com"  
 
 
 # ============================================================
@@ -54,7 +60,7 @@ def inject_custom_css():
         font-family: 'Inter', sans-serif;
     }}
 
-    /* - Ambient background - slow drifting radial glow, restrained - */
+    /* ── Ambient background - slow drifting radial glow, restrained ── */
     .stApp {{
         background:
             radial-gradient(circle at 15% 0%, rgba(82,227,194,0.07) 0%, transparent 45%),
@@ -68,7 +74,7 @@ def inject_custom_css():
         border-right: 1px solid rgba(255,255,255,0.06);
     }}
 
-    /* - Hero banner - */
+    /* ── Hero banner ── */
     .ssk-hero {{
         display: flex;
         align-items: center;
@@ -147,7 +153,7 @@ def inject_custom_css():
         background: rgba(82,227,194,0.08);
     }}
 
-    /* - Sidebar profile card - */
+    /* ── Sidebar profile card ── */
     .ssk-side-card {{
         display: flex; align-items: center; gap: 10px;
         padding: 12px; margin-bottom: 6px;
@@ -164,7 +170,7 @@ def inject_custom_css():
     }}
     .ssk-side-link:hover {{ color: {COLOR_SIGNAL} !important; }}
 
-    /* - Footer - */
+    /* ── Footer ── */
     .ssk-footer {{
         margin-top: 40px;
         padding: 20px 4px 6px 4px;
@@ -175,6 +181,17 @@ def inject_custom_css():
     .ssk-footer-left {{ font-family: 'Inter', sans-serif; font-size: 12px; color: #6B7784; }}
     .ssk-footer-left b {{ color: #9AA6B1; }}
     .ssk-footer-right {{ display: flex; gap: 14px; }}
+
+    /* ── Demo buttons - colour-coded to match their meaning ── */
+    div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-of-type(1) button {{
+        border-left: 4px solid {COLOR_SAFE} !important;
+    }}
+    div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-of-type(2) button {{
+        border-left: 4px solid {COLOR_CAUTION} !important;
+    }}
+    div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-of-type(3) button {{
+        border-left: 4px solid {COLOR_HAZARD} !important;
+    }}
 
     /* Tighten default top padding since hero replaces it */
     .block-container {{ padding-top: 3.2rem; }}
@@ -225,7 +242,7 @@ def render_footer():
     </div>
     """, unsafe_allow_html=True)
 
-# - Audio settings (must match training) ----------─
+# ── Audio settings (must match training) ─────────────────────
 SR         = 16000
 N_MELS     = 64
 HOP_LENGTH = 512
@@ -479,7 +496,7 @@ def render_sidebar():
             c2.markdown(f"**{val}**")
 
         st.divider()
-        st.caption("CP2 - Deep Learning Track")
+        st.caption("SoundSafe Kitchen · v1.0")
         st.caption("Dataset: ESC-50 + Synthetic")
 
     return page
@@ -561,7 +578,7 @@ def page_audio_analysis(model):
 
     # Run analysis
     if audio_data is not None:
-        with st.spinner("Analysing audio..."):
+        with st.spinner("🔊 Listening for hazards..."):
             results = analyse_audio(audio_data, sr_audio, model)
 
         if not results:
@@ -646,6 +663,38 @@ def page_audio_analysis(model):
             showlegend=False,
         )
         st.plotly_chart(fig_w, use_container_width=True)
+
+        # Mel-spectrogram of the highest-risk window - what the model "sees"
+        st.markdown("### What the Model Hears")
+        st.caption(
+            "Mel-spectrogram of the highest-risk 5-second window - "
+            "this is the actual input the CNN + attention layer analyses."
+        )
+        peak_result = max(results, key=lambda r: r["probability"])
+        start_sample = int(peak_result["time_sec"] * sr_audio)
+        end_sample   = start_sample + int(CLIP_DUR * sr_audio)
+        peak_clip    = audio_data[start_sample:end_sample]
+        if len(peak_clip) > 0:
+            peak_prepped = preprocess_audio(peak_clip, sr_audio)
+            mel_db       = audio_to_mel(peak_prepped)
+            fig_mel = go.Figure(go.Heatmap(
+                z=mel_db,
+                colorscale=[
+                    [0.0, "#0A0E14"], [0.4, "#123A4A"],
+                    [0.7, COLOR_SIGNAL], [1.0, "#F5FFFB"],
+                ],
+                colorbar=dict(title="dB", tickfont=dict(color="white")),
+            ))
+            fig_mel.update_layout(
+                height=220,
+                margin=dict(t=10, b=30, l=50, r=10),
+                xaxis_title="Time frame",
+                yaxis_title="Mel band",
+                paper_bgcolor="#0E1117",
+                plot_bgcolor="#0E1117",
+                font=dict(color="white"),
+            )
+            st.plotly_chart(fig_mel, use_container_width=True)
 
         # Hazard probability over time
         st.markdown("### Hazard Probability Over Time")
