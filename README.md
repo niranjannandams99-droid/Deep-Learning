@@ -1,4 +1,4 @@
-<img width="1024" height="740" alt="image" src="https://github.com/user-attachments/assets/7df24cbb-3312-41b9-827f-2a8450ed709d" />
+<img width="605" height="740" alt="image" src="https://github.com/user-attachments/assets/7df24cbb-3312-41b9-827f-2a8450ed709d" />
 
 
 # 🧠 Deep Learning Projects Portfolio
